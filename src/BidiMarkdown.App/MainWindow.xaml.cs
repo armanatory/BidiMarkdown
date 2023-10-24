@@ -43,5 +43,23 @@ namespace BidiMarkdown.App
             // Navigate the WebBrowser to the HTML content
             WebBrowser.NavigateToString(html);
         }
+
+        private void Open_Click(object sender, RoutedEventArgs e)
+        {
+            // Create an OpenFileDialog
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            // Set the filter for md files
+            openFileDialog.Filter = "md files (*.md)|*.md|All files (*.*)|*.*";
+            // Display OpenFileDialog by calling ShowDialog method
+            var result = openFileDialog.ShowDialog();
+            // Get the selected file name and display in a TextBox
+            if (result == true)
+            {
+                // Open document
+                var filename = openFileDialog.FileName;
+                var textRange = new TextRange(RichTextBox.Document.ContentStart, RichTextBox.Document.ContentEnd);
+                textRange.Text = System.IO.File.ReadAllText(filename);
+            }
+        }
     }
 }
