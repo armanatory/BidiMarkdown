@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BidiMarkdown.App", "BidiMarkdown.App\BidiMarkdown.App.csproj", "{BC103093-7A2D-4C09-93AC-E1809C269299}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BidiMarkdown.App", "src\BidiMarkdown.App\BidiMarkdown.App.csproj", "{BC103093-7A2D-4C09-93AC-E1809C269299}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
