@@ -18,6 +18,12 @@ namespace BidiMarkdown.App
         public MainWindow()
         {
             InitializeComponent();
+
+            // set height and width of the window and window state from the Properties.Settings.Default
+            Height = Properties.Settings.Default.WindowHeight;
+            Width = Properties.Settings.Default.WindowWidth;
+            WindowState = (WindowState)Properties.Settings.Default.WindowState;
+
             // Set the initial font family and size of the RichTextBox
             RichTextBox.FontFamily = (FontFamily)FontFamilyComboBox.SelectedItem;
             RichTextBox.FontSize = double.Parse(((ComboBoxItem)FontSizeComboBox.SelectedItem).Content.ToString());
@@ -145,6 +151,12 @@ namespace BidiMarkdown.App
             WebBrowser.FlowDirection = FlowDirection.RightToLeft;
         }
 
-        
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Properties.Settings.Default.WindowHeight = Height;
+            Properties.Settings.Default.WindowWidth = Width;
+            Properties.Settings.Default.WindowState = (int)WindowState;
+            Properties.Settings.Default.Save();
+        }
     }
 }
