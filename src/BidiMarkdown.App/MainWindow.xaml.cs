@@ -7,7 +7,7 @@ using System.Windows.Media;
 using BidiMarkdown.App.Models;
 using LanguageDetection;
 using Markdig;
-
+using Microsoft.Win32;
 
 namespace BidiMarkdown.App
 {
@@ -21,6 +21,14 @@ namespace BidiMarkdown.App
             // Set the initial font family and size of the RichTextBox
             RichTextBox.FontFamily = (FontFamily)FontFamilyComboBox.SelectedItem;
             RichTextBox.FontSize = double.Parse(((ComboBoxItem)FontSizeComboBox.SelectedItem).Content.ToString());
+
+            // if Properties.Setting.Default.LastFileName is not null or empty, load the file content using loadFileContent method
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.LastFileName))
+            {
+                _currentFileName = Properties.Settings.Default.LastFileName;
+                loadFileContent(new OpenFileDialog() { FileName = _currentFileName });
+            }
+
             // Set the initial time of the StatusBar
             TimeTextBlock.Text = DateTime.Now.ToString("HH:mm:ss");
             // Start a timer to update the time every second
@@ -60,13 +68,20 @@ namespace BidiMarkdown.App
             // Get the selected file name and display in a TextBox
             if (result == true)
             {
-                // Open document
-                _currentFileName = openFileDialog.FileName;
-                var textRange = new TextRange(RichTextBox.Document.ContentStart, RichTextBox.Document.ContentEnd);
-                textRange.Text = System.IO.File.ReadAllText(_currentFileName);
+                loadFileContent(openFileDialog);
             }
 
+            Properties.Settings.Default.LastFileName = _currentFileName;
+            Properties.Settings.Default.Save();
+        }
+
+        private void loadFileContent(OpenFileDialog openFileDialog)
+        {
+            _currentFileName = openFileDialog.FileName;
+            var textRange = new TextRange(RichTextBox.Document.ContentStart, RichTextBox.Document.ContentEnd);
+            textRange.Text = System.IO.File.ReadAllText(_currentFileName);
             RichTextBoxDirection();
+            RichTextBox_TextChanged(null, null);
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -129,5 +144,7 @@ namespace BidiMarkdown.App
             // a for each loop to check each paragraph in the HtmlView and set the text direction
             WebBrowser.FlowDirection = FlowDirection.RightToLeft;
         }
+
+        
     }
 }
