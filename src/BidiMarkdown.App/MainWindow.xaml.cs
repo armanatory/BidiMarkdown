@@ -4,6 +4,8 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using BidiMarkdown.App.Models;
+using LanguageDetection;
 using Markdig;
 
 
@@ -27,17 +29,6 @@ namespace BidiMarkdown.App
             timer.Tick += Timer_Tick;
             timer.Start();
         }
-        private void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            this.Open_Click(sender, e);
-        }
-
-
-        private void SaveAsCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            this.Open_Click(sender, e);
-        }
-
 
         private void Timer_Tick(object sender, EventArgs e)
         {
@@ -74,6 +65,8 @@ namespace BidiMarkdown.App
                 var textRange = new TextRange(RichTextBox.Document.ContentStart, RichTextBox.Document.ContentEnd);
                 textRange.Text = System.IO.File.ReadAllText(_currentFileName);
             }
+
+            RichTextBoxDirection();
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -110,7 +103,31 @@ namespace BidiMarkdown.App
             }
         }
 
+        private void RichTextBoxDirection()
+        {
+            // Create a LanguageDetector
+            var languageDetector = new LanguageDetector();
+            languageDetector.AddAllLanguages();
 
+            //a for each loop to go through each paragraph in the RichTextBox
+            foreach (var block in RichTextBox.Document.Blocks)
+            {
+                // Create a TextRange for the current paragraph
+                TextRange paragraphTextRange = new TextRange(block.ContentStart, block.ContentEnd);
+                // Detect the language of the paragraph
+                string language = languageDetector.Detect(paragraphTextRange.Text);
+                
+                // returng the langauge direction based on the LanguageDirectionsDictionary if lanuage is not null
+                LanguageDirection languageDirection = LanguageDirection.LTR;
+                if (language != null && LanguageDirections.Directions.ContainsKey(language))
+                    languageDirection = Models.LanguageDirections.Directions[language];
+               
+                // Set the FlowDirection of the paragraph
+                block.FlowDirection = languageDirection == LanguageDirection.LTR ? FlowDirection.LeftToRight : FlowDirection.RightToLeft;
+            }
 
+            // a for each loop to check each paragraph in the HtmlView and set the text direction
+            WebBrowser.FlowDirection = FlowDirection.RightToLeft;
+        }
     }
 }

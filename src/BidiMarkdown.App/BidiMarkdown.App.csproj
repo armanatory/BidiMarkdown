@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LanguageDetection" Version="1.2.0" />
     <PackageReference Include="Markdig" Version="0.33.0" />
   </ItemGroup>
 
